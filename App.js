@@ -1,21 +1,33 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StatusBar } from "expo-status-bar";
+import React, { useState, useEffect } from "react";
+import { FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
+
+import Movie from "./src/Movie/Movie";
+
+import api from "./src/services/api";
 
 export default function App() {
+  const [filmes, setFilmes] = useState([]);
+
+  useEffect(() => {
+    async function LoadMovie() {
+      const res = await api.get('r-api/?api=filmes');
+      setFilmes(res.data);
+    }
+    LoadMovie();
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+    <View>
+      <SafeAreaView />
+      <FlatList
+        data={filmes}
+        keyExtractor={  item => String(item.id)}
+        renderItem={({ item }) => <Movie data={item}
+         />}
+      />
+      
       <StatusBar style="auto" />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
